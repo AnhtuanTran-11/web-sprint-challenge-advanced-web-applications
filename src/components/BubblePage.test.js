@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import axiosMock from 'axios';
+import axiosMock from "axios";
 import BubblePage from "./BubblePage";
 
 import mockBubblePage from "./BubblePage";
-jest.mock("./BubblePage")
+jest.mock("./BubblePage");
 
 const testColor = {
   color: "test",
@@ -17,10 +17,10 @@ test("Renders BubblePage without errors", () => {
 });
 
 test("Fetches data and renders the bubbles on mounting", async () => {
-  mockBubblePage.mockResolvedValueOnce(testColor)
+  mockBubblePage.mockResolvedValueOnce(testColor);
   render(<BubblePage />);
 
-  const bubbles = await screen.findAllByTestId('color')
+  const bubbles = await screen.findAllByTestId("color");
   expect(bubbles).toBeInTheDocument();
 });
 

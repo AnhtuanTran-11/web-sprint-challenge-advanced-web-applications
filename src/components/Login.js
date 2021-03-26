@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const initialValues = {
-  username: '',
-  password: '',
-}
+  username: "",
+  password: "",
+};
 
 const Login = (props) => {
-  const [state, setState] = useState(initialValues)
+  const [state, setState] = useState(initialValues);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -15,7 +15,7 @@ const Login = (props) => {
       .post("http://localhost:5000/api/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.payload);
-        props.history.push('/protected')
+        props.history.push("/protected");
       })
       .catch((err) => {
         console.log(err.response);
@@ -28,7 +28,7 @@ const Login = (props) => {
       [e.target.name]: e.target.value,
     });
   };
-  
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -48,7 +48,9 @@ const Login = (props) => {
         />
         <button>Submit</button>
       </form>
-      {(state.username || state.password === "") && <h1>Username or Password not valid.</h1>}
+      {(state.username || state.password === "") && (
+        <h1>Username or Password not valid.</h1>
+      )}
     </div>
   );
 };

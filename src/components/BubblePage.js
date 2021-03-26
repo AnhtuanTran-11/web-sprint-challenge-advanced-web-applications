@@ -13,7 +13,7 @@ const BubblePage = () => {
         setColorList(res.data);
       });
   }, []);
-  
+
   const deleteFilter = (id) => {
     setColorList(
       colorList.filter((eachColor) => {
