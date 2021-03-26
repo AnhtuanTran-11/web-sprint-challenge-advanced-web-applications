@@ -1,41 +1,68 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import EditMenu from "./EditMenu";
+import { axiosWithAuth } from "../helpers/axiosWithAuth";
 
 const initialColor = {
   color: "",
-  code: { hex: "" }
+  code: { hex: "" },
 };
 
-const ColorList = ({ colors, updateColors }) => {
+const ColorList = ({ colors, deleteFilter, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  // const { id } = useParams();
 
-  const editColor = color => {
+  const editColor = (color) => {
     setEditing(true);
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
+  const saveEdit = (e) => {
     e.preventDefault();
-
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then((res) => {
+        updateColors(
+          colors.map((eachColor) => {
+            if (eachColor.id === colorToEdit.id) {
+              return colorToEdit;
+            } else {
+              return eachColor;
+            }
+          })
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const deleteColor = color => {
+  const deleteColor = (color) => {
+    axiosWithAuth()
+      .delete(`http://localhost:5000/api/colors/${color.id}`)
+      .then((res) => {
+        deleteFilter(color.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <div className="colors-wrap">
       <p>colors</p>
       <ul>
-        {colors.map(color => (
+        {colors.map((color) => (
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
-              <span className="delete" onClick={e => {
-                    e.stopPropagation();
-                    deleteColor(color)
-                  }
-                }>
-                  x
+              <span
+                className="delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteColor(color);
+                }}
+              >
+                x
               </span>{" "}
               {color.color}
             </span>
@@ -46,8 +73,14 @@ const ColorList = ({ colors, updateColors }) => {
           </li>
         ))}
       </ul>
-      { editing && <EditMenu colorToEdit={colorToEdit} saveEdit={saveEdit} setColorToEdit={setColorToEdit} setEditing={setEditing}/> }
-
+      {editing && (
+        <EditMenu
+          colorToEdit={colorToEdit}
+          saveEdit={saveEdit}
+          setColorToEdit={setColorToEdit}
+          setEditing={setEditing}
+        />
+      )}
     </div>
   );
 };

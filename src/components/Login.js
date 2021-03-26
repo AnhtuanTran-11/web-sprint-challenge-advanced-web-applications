@@ -1,21 +1,55 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+const initialValues = {
+  username: '',
+  password: '',
+}
 
-  useEffect(()=>{
-    // make a post request to retrieve a token from the api
-    // when you have handled the token, navigate to the BubblePage route
-  });
+const Login = (props) => {
+  const [state, setState] = useState(initialValues)
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:5000/api/login", state)
+      .then((res) => {
+        localStorage.setItem("token", res.data.payload);
+        props.history.push('/protected')
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
+  const onChange = (e) => {
+    setState({
+      ...state,
+      [e.target.name]: e.target.value,
+    });
+  };
+  
   return (
-    <>
-      <h1>
-        Welcome to the Bubble App!
-        <p>Build a login page here</p>
-      </h1>
-    </>
+    <div>
+      <form onSubmit={onSubmit}>
+        <label htmlFor="username">Username</label>
+        <input
+          type="text"
+          name="username"
+          value={state.username}
+          onChange={onChange}
+        />
+        <label htmlFor="name">Password</label>
+        <input
+          type="text"
+          name="password"
+          value={state.password}
+          onChange={onChange}
+        />
+        <button>Submit</button>
+      </form>
+      {(state.username || state.password === "") && <h1>Username or Password not valid.</h1>}
+    </div>
   );
 };
 
